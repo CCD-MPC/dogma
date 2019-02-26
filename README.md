@@ -1,2 +1,2 @@
-# policy-engine
+# policy_engine
 Policy engine for verifying workflows
