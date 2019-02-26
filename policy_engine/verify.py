@@ -1,9 +1,9 @@
 import conclave.dag as con_dag
 
 
-class PolicyEngine:
+class Verify:
 
-    def __init__(self, protocol: callable, pid: int, policy: dict):
+    def __init__(self, protocol, policy, pid):
 
         self.protocol = con_dag.OpDag(protocol())
         self.policy = policy
@@ -16,10 +16,9 @@ class PolicyEngine:
         """
 
         if self.protocol:
-
+            print("\n\n\n***Verified***\n\n\n")
             return True
 
         else:
-
             raise Exception("No protocol passed to PolicyEngine.")
 
