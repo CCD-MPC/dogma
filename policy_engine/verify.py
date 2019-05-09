@@ -21,4 +21,3 @@ class Verify:
 
         else:
             raise Exception("No protocol passed to PolicyEngine.")
-
