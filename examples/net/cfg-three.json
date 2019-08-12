@@ -1,0 +1,17 @@
+{
+  "pid": "3",
+  "parties": {
+    "1": {
+      "host": "localhost",
+      "port": 9000
+    },
+    "2": {
+      "host": "localhost",
+      "port": 9001
+    },
+    "3": {
+      "host": "localhost",
+      "port": 9002
+    }
+  }
+}
