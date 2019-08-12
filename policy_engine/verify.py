@@ -1,13 +1,22 @@
 import conclave.dag as con_dag
+import conclave.comp as comp
+
+from policy_engine.net import setup_peer
 
 
 class Verify:
 
-    def __init__(self, protocol, policy, pid):
+    def __init__(self, protocol, policy, conf):
 
         self.protocol = con_dag.OpDag(protocol())
         self.policy = policy
-        self.pid = pid
+        self.config = conf
+        self.pid = int(conf["user_config"]["pid"])
+        self.peer = self._setup_networked_peer()
+
+    def _setup_networked_peer(self):
+
+        return setup_peer(self.config)
 
     def verify(self):
         """
@@ -21,3 +30,7 @@ class Verify:
 
         else:
             raise Exception("No protocol passed to PolicyEngine.")
+
+    def rewrite_dag(self):
+
+        return comp.rewrite_dag(self.protocol, self.config)
