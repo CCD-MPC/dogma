@@ -57,19 +57,25 @@ class PolicyProtocolClient(asyncio.Protocol):
 
     def data_received(self, data):
         """
-        Handle incoming messages.
+        Add incoming messages to buffer and process them.
         """
 
         self.buffer += data
         self.handle_lines()
 
     def handle_lines(self):
+        """
+        Process messages in buffer.
+        """
 
         while b"\n\n\n" in self.buffer:
             data, self.buffer = self.buffer.split(b"\n\n\n", 1)
             self.handle_msg(data)
 
     def handle_msg(self, data):
+        """
+        Determine message type and process accordingly.
+        """
 
         msg = pickle.loads(data)
 
@@ -91,6 +97,9 @@ class PolicyProtocolClient(asyncio.Protocol):
         print("IAMMsg received: {}".format(msg.pid))
 
     def _handle_policy_msg(self, msg):
+        """
+        Resolve policy future and ack it.
+        """
 
         print("PolicyMsg received: {}".format(msg.pid))
         policy = self.peer.policies[msg.pid]["policy"]
@@ -102,6 +111,9 @@ class PolicyProtocolClient(asyncio.Protocol):
             policy.set_result(msg.policy)
 
     def _handle_policy_ack_msg(self, msg):
+        """
+        Resolve policy ack future.
+        """
 
         print("PolicyAckMsg received: {}".format(msg.pid))
         ack = self.peer.policies[msg.pid]["ack"]
@@ -110,9 +122,6 @@ class PolicyProtocolClient(asyncio.Protocol):
             ack.set_result(True)
 
     def connection_lost(self, exc):
-        """
-        Stop loop if connection to server is lost.
-        """
 
         print('The server closed the connection')
 
@@ -137,19 +146,25 @@ class PolicyProtocolServer(asyncio.Protocol):
 
     def data_received(self, data):
         """
-        Handle incoming messages.
+        Add incoming messages to buffer and process them.
         """
 
         self.buffer += data
         self.handle_lines()
 
     def handle_lines(self):
+        """
+        Process messages in buffer.
+        """
 
         while b"\n\n\n" in self.buffer:
             data, self.buffer = self.buffer.split(b"\n\n\n", 1)
             self.handle_msg(data)
 
     def handle_msg(self, data):
+        """
+        Determine message type and process accordingly.
+        """
 
         msg = pickle.loads(data)
 
@@ -166,6 +181,9 @@ class PolicyProtocolServer(asyncio.Protocol):
             print("Weird message: {}".format(msg))
 
     def _handle_iam_msg(self, msg):
+        """
+        Respond to IAMMsg from client and resolve peer connection future.
+        """
 
         print("IAMMsg received: {}".format(msg.pid))
         conn = self.peer.peer_connections[msg.pid]
@@ -177,9 +195,15 @@ class PolicyProtocolServer(asyncio.Protocol):
             conn.set_result((self.transport, self))
 
     def _handle_policy_msg(self, msg):
+        """
+        Send ack for incoming policy, send policy, and resolve policy future.
+        """
 
         print("PolicyMsg received: {}".format(msg.pid))
         policy = self.peer.policies[msg.pid]["policy"]
+
+        print("Sending PolicyAckMsg to: {}".format(msg.pid))
+        self.peer.send_policy_ack(self.transport)
 
         print("Sending PolicyMsg to: {}".format(msg.pid))
         self.peer.send_policy(self.transport)
@@ -188,12 +212,12 @@ class PolicyProtocolServer(asyncio.Protocol):
             policy.set_result(msg.policy)
 
     def _handle_policy_ack_msg(self, msg):
+        """
+        Resolve policy ack future.
+        """
 
         print("PolicyAckMsg received: {}".format(msg.pid))
         ack = self.peer.policies[msg.pid]["ack"]
-
-        print("Sending PolicyAckMsg to: {}".format(msg.pid))
-        self.peer.send_policy_ack(self.transport)
 
         if isinstance(ack, asyncio.Future):
             ack.set_result(True)
@@ -308,6 +332,9 @@ class PolicyPeer:
             self.peer_connections[pid] = completed_future.result()[0]
 
     def exchange_policies(self):
+        """
+        Exchange policy with other parties and wait on acks.
+        """
 
         to_wait_on = []
 
