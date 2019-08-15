@@ -5,6 +5,6 @@ import json
 if __name__ == "__main__":
 
     p = pnet.setup_peer(json.load(open(sys.argv[1], 'r')))
-    print(p.peer_connections)
-    print(p.policies)
+    policies = p.get_policies_from_others()
+    print(policies)
     print("\nDONE\n")
