@@ -361,6 +361,10 @@ class PolicyPeer:
         self._wait_on_acks()
 
     def _wait_on_acks(self):
+        """
+        Wait on acks from other parties indicating that they
+        have received this party's policy.
+        """
 
         to_wait_on = []
 
@@ -379,6 +383,23 @@ class PolicyPeer:
                 completed_policy_ack_future = self.policies[pid]["ack"]
                 self.policies[pid]["ack"] = completed_policy_ack_future.result()
 
+    def get_policies_from_others(self):
+        """
+        Return all policies in dict.
+        """
+
+        if self.peer_connections == {}:
+            self.connect_to_others()
+
+        self.exchange_policies()
+
+        ret = {self.pid: "POLICY-{}".format(self.pid)}
+
+        for k in self.policies.keys():
+            ret[k] = self.policies[k]["policy"]
+
+        return ret
+
 
 def setup_peer(config):
     """
@@ -389,6 +410,5 @@ def setup_peer(config):
     peer = PolicyPeer(loop, config)
     peer.server = loop.run_until_complete(peer.server)
     peer.connect_to_others()
-    peer.exchange_policies()
 
     return peer
