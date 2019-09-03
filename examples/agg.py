@@ -1,3 +1,6 @@
+import sys
+import json
+
 from policy_engine.verify import Verify
 from conclave.utils import *
 import conclave.lang as cc
@@ -30,5 +33,11 @@ def protocol():
 
 if __name__ == "__main__":
 
-    ver = Verify(protocol, {}, 1)
+    conf = json.load(sys.argv[1])
+
+    f = conf['data']['file_name']
+    fname = ".".join(f.split(".")[:-1])
+    pname = ".".join([fname, "json"])
+
+    ver = Verify(protocol, "/data/{}".format(pname), conf)
     ver.verify()
