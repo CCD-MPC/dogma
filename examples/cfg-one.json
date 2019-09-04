@@ -1,17 +1,21 @@
 {
-  "pid": "1",
-  "parties": {
-    "1": {
-      "host": "localhost",
-      "port": 9000
-    },
-    "2": {
-      "host": "localhost",
-      "port": 9001
-    },
-    "3": {
-      "host": "localhost",
-      "port": 9002
-    }
+  "user_config":{
+    "pid": 1
+  },
+  "net": {
+    "parties": [
+      {
+        "host": "localhost",
+        "port": 9000
+      },
+      {
+        "host": "localhost",
+        "port": 9001
+      },
+      {
+        "host": "localhost",
+        "port": 9002
+      }
+    ]
   }
 }

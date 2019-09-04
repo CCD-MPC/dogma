@@ -33,11 +33,10 @@ def protocol():
 
 if __name__ == "__main__":
 
-    conf = json.load(sys.argv[1])
+    with open(sys.argv[1], 'r') as c:
+        conf = json.load(c)
+    with open(sys.argv[2], 'r') as p:
+        policy = json.load(p)
 
-    f = conf['data']['file_name']
-    fname = ".".join(f.split(".")[:-1])
-    pname = ".".join([fname, "json"])
-
-    ver = Verify(protocol, "/data/{}".format(pname), conf)
+    ver = Verify(protocol, policy, conf)
     ver.verify()
