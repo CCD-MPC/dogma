@@ -13,7 +13,7 @@ class Verify:
         self.protocol = con_dag.OpDag(protocol())
         self.config = conf
         self.policy = self.setup_policy(policy)
-        self.pid = int(conf["user_config"]["pid"])
+        self.pid = conf["user_config"]["pid"]
         self.peer = self._setup_networked_peer()
 
     @staticmethod
@@ -37,6 +37,7 @@ class Verify:
         """
 
         policies = self.peer.get_policies_from_others()
+        policies[self.pid] = self.policy
 
         if self.protocol:
             print("\n\n\n***Verified***\n\n\n")

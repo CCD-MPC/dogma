@@ -231,8 +231,8 @@ class PolicyPeer:
 
     def __init__(self, loop, config):
 
-        self.pid = config["pid"]
-        self.parties = config["parties"]
+        self.pid = config["user_config"]["pid"]
+        self.parties = config["net"]["parties"]
         self.host = self.parties[self.pid]["host"]
         self.port = self.parties[self.pid]["port"]
         self.peer_connections = {}
