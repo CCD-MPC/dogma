@@ -17,7 +17,7 @@ class IAMMsg:
 class PolicyMsg:
     """ Message specifying a policy corresponding to an input party. """
 
-    def __init__(self, pid: str, policy: str):
+    def __init__(self, pid: str, policy: dict):
 
         self.pid = pid
         self.policy = policy
@@ -229,10 +229,11 @@ class PolicyPeer:
     messages to other peers and forward the received messages to the other peers.
     """
 
-    def __init__(self, loop, config):
+    def __init__(self, loop, config, policy):
 
         self.pid = config["user_config"]["pid"]
-        self.parties = config["net"]["parties"]
+        self.parties = self.setup_network_config(config)
+        self.policy = policy
         self.host = self.parties[self.pid]["host"]
         self.port = self.parties[self.pid]["port"]
         self.peer_connections = {}
@@ -260,6 +261,22 @@ class PolicyPeer:
 
         return ret
 
+    @staticmethod
+    def setup_network_config(config):
+        """
+        Return network configuration dict.
+        """
+
+        ret = {}
+        parties = config["net"]["parties"]
+
+        for i in range(len(parties)):
+            ret[i + 1] = {}
+            ret[i + 1]["host"] = parties[i]["host"]
+            ret[i + 1]["port"] = parties[i]["port"]
+
+        return ret
+
     def close_server(self):
 
         self.server.close()
@@ -279,7 +296,7 @@ class PolicyPeer:
 
     def send_policy(self, conn):
 
-        msg = PolicyMsg(self.pid, 'POLICY-{}'.format(self.pid))
+        msg = PolicyMsg(self.pid, self.policy)
         formatted = pickle.dumps(msg) + b"\n\n\n"
         conn.write(formatted)
 
@@ -340,13 +357,13 @@ class PolicyPeer:
 
         for other_pid in self.parties.keys():
 
-            if int(other_pid) < int(self.pid):
+            if other_pid < self.pid:
 
                 print("Sending policy to {}".format(other_pid))
                 self.send_policy(self.peer_connections[other_pid])
                 to_wait_on.append(self.policies[other_pid]["policy"])
 
-            elif int(other_pid) > int(self.pid):
+            elif other_pid > self.pid:
 
                 print("Will wait for policy from {}".format(other_pid))
                 to_wait_on.append(self.policies[other_pid]["policy"])
@@ -370,7 +387,7 @@ class PolicyPeer:
 
         for other_pid in self.parties.keys():
 
-            if int(other_pid) != int(self.pid):
+            if other_pid != self.pid:
                 to_wait_on.append(self.policies[other_pid]["ack"])
 
         if len(to_wait_on) > 0:
@@ -393,7 +410,7 @@ class PolicyPeer:
 
         self.exchange_policies()
 
-        ret = {self.pid: "POLICY-{}".format(self.pid)}
+        ret = {self.pid: self.policy}
 
         for k in self.policies.keys():
             ret[k] = self.policies[k]["policy"]
@@ -401,13 +418,13 @@ class PolicyPeer:
         return ret
 
 
-def setup_peer(config):
+def setup_peer(config, policy):
     """
     Creates a peer and connects peer to all other peers. Blocks until connection succeeds.
     """
 
     loop = asyncio.get_event_loop()
-    peer = PolicyPeer(loop, config)
+    peer = PolicyPeer(loop, config, policy)
     peer.server = loop.run_until_complete(peer.server)
     peer.connect_to_others()
 

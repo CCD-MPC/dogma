@@ -22,13 +22,14 @@ class Verify:
         if isinstance(p, dict):
             return p
         elif isinstance(p, str):
-            return json.load(p)
+            with open(p, 'r') as pol:
+                return json.load(pol)
         else:
             raise Exception("TypeError: Policy must be either dict or JSON.\n")
 
     def _setup_networked_peer(self):
 
-        return setup_peer(self.config)
+        return setup_peer(self.config, self.policy)
 
     def verify(self):
         """
@@ -37,7 +38,8 @@ class Verify:
         """
 
         policies = self.peer.get_policies_from_others()
-        policies[self.pid] = self.policy
+
+        print(policies)
 
         if self.protocol:
             print("\n\n\n***Verified***\n\n\n")
