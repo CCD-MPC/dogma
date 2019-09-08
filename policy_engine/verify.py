@@ -37,9 +37,9 @@ class Verify:
         the protocol and compare it against the policy for the given PID.
         """
 
-        # policies = self.peer.get_policies_from_others()
-        #
-        # print(policies)
+        policies = self.peer.get_policies_from_others()
+
+        print(policies)
 
         if self.protocol:
             self.peer.close_server()
