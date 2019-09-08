@@ -42,11 +42,13 @@ class Verify:
         # print(policies)
 
         if self.protocol:
+            self.peer.close_server()
             print("\n\n\n***Verified***\n\n\n")
             return True
 
         else:
-            raise Exception("No protocol passed to PolicyEngine.")
+            self.peer.close_server()
+            return False
 
     def rewrite_dag(self):
 
