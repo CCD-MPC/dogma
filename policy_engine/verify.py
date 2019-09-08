@@ -14,7 +14,8 @@ class Verify:
         self.config = conf
         self.policy = self.setup_policy(policy)
         self.pid = conf["user_config"]["pid"]
-        self.peer = self._setup_networked_peer()
+        # self.peer = self._setup_networked_peer()
+        self.peer = None
 
     @staticmethod
     def setup_policy(p: [str, dict]):
@@ -37,9 +38,9 @@ class Verify:
         the protocol and compare it against the policy for the given PID.
         """
 
-        policies = self.peer.get_policies_from_others()
-
-        print(policies)
+        # policies = self.peer.get_policies_from_others()
+        #
+        # print(policies)
 
         if self.protocol:
             print("\n\n\n***Verified***\n\n\n")
