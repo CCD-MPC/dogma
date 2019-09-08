@@ -15,7 +15,6 @@ class Verify:
         self.policy = self.setup_policy(policy)
         self.pid = conf["user_config"]["pid"]
         self.peer = self._setup_networked_peer()
-        self.peer = None
 
     @staticmethod
     def setup_policy(p: [str, dict]):
