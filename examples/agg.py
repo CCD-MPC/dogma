@@ -1,7 +1,7 @@
 import sys
 import json
 
-from policy_engine.verify import Verify
+from dogma.verify import Verify
 from conclave.utils import *
 import conclave.lang as cc
 

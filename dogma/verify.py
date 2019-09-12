@@ -3,7 +3,7 @@ import json
 import conclave.dag as con_dag
 import conclave.comp as comp
 
-from policy_engine.net import setup_peer
+from dogma.net import setup_peer
 
 
 class Verify:
