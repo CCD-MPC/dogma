@@ -22,11 +22,18 @@ def protocol():
     in1 = cc.create("in1", cols_in_a, {1})
     in2 = cc.create("in2", cols_in_b, {2})
 
-    cc1 = cc.concat([in1, in2], 'cc1', ['a', 'b', 'c'])
+    proj1 = cc.project(in1, "proj1", ['b', 'a'])
+    proj2 = cc.project(in2, "proj2", ['b', 'a'])
 
-    agg1 = cc.aggregate(cc1, "agg1", ['a'], "b", "mean", "b")
+    cc1 = cc.concat([proj1, proj2], 'cc1', ['d', 'e'])
+
+    agg1 = cc.aggregate(cc1, "agg1", ['d'], "e", "mean", "meanCol")
 
     cc.collect(agg1, 1)
+
+    # j = cc.join(proj1, proj2, "join1", ['b'], ['a'])
+    #
+    # cc.collect(j, 1)
 
     return {in1, in2}
 
@@ -39,4 +46,6 @@ if __name__ == "__main__":
         policy = json.load(p)
 
     ver = Verify(protocol, policy, conf)
-    ver.verify()
+    t = ver._verify(policy)
+
+    print("Hey")
