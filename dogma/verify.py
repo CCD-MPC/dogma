@@ -172,8 +172,10 @@ class Verify:
 
         if len(node.children) == 1:
             return self._verify_column(column, node.children.pop())
-        else:
+        elif len(node.children) == 0:
             return column
+        else:
+            raise NotImplementedError("Workflows with node splitting not yet implemented.\n")
 
     def _verify_column(self, column, node):
         """
