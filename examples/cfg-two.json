@@ -1,6 +1,6 @@
 {
   "user_config":{
-    "pid": 3
+    "pid": 2
   },
   "net": {
     "parties": [
@@ -11,10 +11,6 @@
       {
         "host": "localhost",
         "port": 9001
-      },
-      {
-        "host": "localhost",
-        "port": 9002
       }
     ]
   }

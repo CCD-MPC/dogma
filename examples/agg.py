@@ -3,7 +3,7 @@ import json
 
 from dogma.verify import Verify
 from conclave.utils import *
-import conclave.lang as cc
+from conclave.lang import *
 
 
 def protocol():
@@ -19,21 +19,17 @@ def protocol():
         defCol('c', 'INTEGER', [2]),
     ]
 
-    in1 = cc.create("in1", cols_in_a, {1})
-    in2 = cc.create("in2", cols_in_b, {2})
+    in1 = create("in1", cols_in_a, {1})
+    in2 = create("in2", cols_in_b, {2})
 
-    proj1 = cc.project(in1, "proj1", ['b', 'a'])
-    proj2 = cc.project(in2, "proj2", ['b', 'a'])
+    proj1 = project(in1, "proj1", ['a', 'b'])
+    proj2 = project(in2, "proj2", ['a', 'b'])
 
-    cc1 = cc.concat([proj1, proj2], 'cc1', ['d', 'e'])
+    cc1 = concat([proj1, proj2], 'cc1', ['d', 'e'])
 
-    agg1 = cc.aggregate(cc1, "agg1", ['d'], "e", "mean", "meanCol")
+    agg1 = aggregate(cc1, "agg1", ['d'], "e", "mean", "meanCol")
 
-    cc.collect(agg1, 1)
-
-    # j = cc.join(proj1, proj2, "join1", ['b'], ['a'])
-    #
-    # cc.collect(j, 1)
+    collect(agg1, 1)
 
     return {in1, in2}
 
@@ -46,6 +42,6 @@ if __name__ == "__main__":
         policy = json.load(p)
 
     ver = Verify(protocol, policy, conf)
-    t = ver._verify(policy)
+    t = ver.verify()
 
-    print("Hey")
+    print(t)

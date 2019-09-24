@@ -1,0 +1,18 @@
+{
+  "fileName": "in2",
+  "columns":
+  {
+    "a":
+    {
+      "read": true
+    },
+    "b":
+    {
+      "read": false
+    },
+    "c":
+    {
+      "read": false
+    }
+  }
+}
