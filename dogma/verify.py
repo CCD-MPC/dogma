@@ -225,7 +225,7 @@ class Verify:
         if self.peer is None:
             self.setup_networked_peer()
 
-        policies = self.peer.get_policies_from_others()
+        policies = self.peer.get_policies_from_others().values()
 
         return all([self._verify(policy) for policy in policies])
 
