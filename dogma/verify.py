@@ -2,7 +2,6 @@ import json
 import copy
 
 from conclave.dag import *
-import conclave.comp as comp
 
 from dogma.net import setup_peer
 
@@ -95,9 +94,15 @@ class Verify:
                 column.idx = c.idx
                 return self._continue_traversal(column, node)
 
-        # if the column is not present in the out_rel list, then it is
-        # not present in the output and can be verified.
-        return column.verify()
+        """
+        NOTE - we don't automatically verify the column here because it is possible
+        to perform some backwards inferrable operation on a revealable column
+        (e.g. - multiply) from a non-revealable column and then project out the
+        non-revealable column from the relation. Thus, even though this column is
+        not explicitly part of the output, we still treat it as such to avoid this kind
+        of exploit.
+        """
+        return self._continue_traversal(column, node)
 
     @staticmethod
     def _rewrite_column_for_left(column, node):
@@ -228,10 +233,6 @@ class Verify:
         policies = self.peer.get_policies_from_others().values()
 
         return all([self._verify(policy) for policy in policies])
-
-    def rewrite_dag(self):
-
-        return comp.rewrite_dag(self.protocol, self.config)
 
 
 class Column:
